@@ -4,11 +4,13 @@ import android.content.ContentResolver;
 import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.PorterDuff;
+import android.graphics.drawable.GradientDrawable;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.ImageView;
 import android.widget.SeekBar;
 import android.widget.TextView;
@@ -39,6 +41,8 @@ public class MusicDetailView extends AppCompatActivity implements View.OnClickLi
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
+                WindowManager.LayoutParams.FLAG_FULLSCREEN);
         setContentView(R.layout.music_detail_view);
         Intent intent = getIntent();
         mediaPlayer = new MediaPlayer();
@@ -197,23 +201,23 @@ public class MusicDetailView extends AppCompatActivity implements View.OnClickLi
                     dislike.setVisibility(View.VISIBLE);
                     if(isLike){
                         dislike.setColorFilter(null);
-                        like.setColorFilter(Color.parseColor("#006300"), PorterDuff.Mode.SRC_IN);
+                        like.setColorFilter(Color.parseColor("#21FF4D"), PorterDuff.Mode.SRC_IN);
                     }
                     else{
                         like.setColorFilter(null);
-                        dislike.setColorFilter(Color.parseColor("#951900"), PorterDuff.Mode.SRC_IN);
+                        dislike.setColorFilter(Color.parseColor("#E32A00"), PorterDuff.Mode.SRC_IN);
                     }
                 }
                 isSmile = !isSmile;
                 break;
             case R.id.like:
                 dislike.setColorFilter(null);
-                like.setColorFilter(Color.parseColor("#006300"), PorterDuff.Mode.SRC_IN);
+                like.setColorFilter(Color.parseColor("#21FF4D"), PorterDuff.Mode.SRC_IN);
                 isLike = true;
                 break;
             case R.id.dislike:
                 like.setColorFilter(null);
-                dislike.setColorFilter(Color.parseColor("#951900"), PorterDuff.Mode.SRC_IN);
+                dislike.setColorFilter(Color.parseColor("#E32A00"), PorterDuff.Mode.SRC_IN);
                 isLike = false;
         }
     }
