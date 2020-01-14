@@ -38,6 +38,8 @@ import org.json.JSONObject;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
 
 import okhttp3.ResponseBody;
@@ -53,8 +55,6 @@ public class MainActivity extends AppCompatActivity {
     private Retrofit mRetrofit;
     private RetrofitAPI mRetrofitAPI;
     private int introflag = 1;
-    private int flag = 0;
-    private int total_flag = 1;
 
     @RequiresApi(api = Build.VERSION_CODES.M)
     @Override
@@ -80,30 +80,7 @@ public class MainActivity extends AppCompatActivity {
         });
         thread.start();
 
-        if (ContextCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE)!= PackageManager.PERMISSION_GRANTED) {
-            requestPermissions(new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}, 200);
-        }
-        else{
-            flag+=1;
-        }
-
-        if(flag == total_flag) init();
-    }
-
-    private void init(){
         request_music();
-    }
-
-
-    @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        // If request is cancelled, the result arrays are empty.
-        if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-            if (flag == total_flag - 1) init();
-            else flag += 1;
-        } else {
-            android.os.Process.killProcess(android.os.Process.myPid());
-        }
     }
 
     public void request_music(){
@@ -125,16 +102,19 @@ public class MainActivity extends AppCompatActivity {
                     MusicDTO music_dto = new MusicDTO();
                     music_dto.setId(tmp_object.get("id").toString()); //서버에 저장된 파일 이름
                     music_dto.setTitle(tmp_object.get("title").toString()); //ㄹㅇ 음악이름
-                    String tmp_bitmap_string = tmp_object.get("albumImage").toString().split(",")[1];
 
+                    String tmp_bitmap_string = tmp_object.get("albumImage").toString().split(",")[1];
                     byte[] decodedString = Base64.decode(tmp_bitmap_string, Base64.DEFAULT);
                     Bitmap tmp_bitmap = BitmapFactory.decodeByteArray(decodedString, 0, decodedString.length);
                     if(tmp_bitmap == null) Log.i("result_info","no tmp_bitmap");
                     music_dto.setAlbumImage(tmp_bitmap);
+
+
                     music_dto.setArtist(tmp_object.get("artist").toString());
                     music_list.add(music_dto);
 
                     if(i==size-1){
+                        Collections.sort(music_list, MusicComparator);
                         View view = findViewById(R.id.music_list);
                         musicListView = findViewById(R.id.music_list);
                         musicListView.setAdapter(new MusicListViewAdapter(view, music_list));
@@ -249,4 +229,15 @@ public class MainActivity extends AppCompatActivity {
                 .build();
         mRetrofitAPI = mRetrofit.create(RetrofitAPI.class);
     }
+
+
+    public static Comparator<MusicDTO> MusicComparator = new Comparator<MusicDTO>() {
+
+        public int compare(MusicDTO s1, MusicDTO s2) {
+            String MusicName1 = s1.getId().toUpperCase();
+            String MusicName2 = s2.getId().toUpperCase();
+
+            return MusicName1.compareTo(MusicName2);
+
+        }};
 }

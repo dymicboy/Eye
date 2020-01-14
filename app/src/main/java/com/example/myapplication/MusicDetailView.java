@@ -4,7 +4,6 @@ import android.content.ContentResolver;
 import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.PorterDuff;
-import android.graphics.drawable.GradientDrawable;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.os.Bundle;
@@ -19,10 +18,23 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.squareup.picasso.Picasso;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.IOException;
 import java.util.List;
 import java.util.Random;
 
+import okhttp3.ResponseBody;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+import retrofit2.Retrofit;
+import retrofit2.converter.gson.GsonConverterFactory;
+
 public class MusicDetailView extends AppCompatActivity implements View.OnClickListener {
+    private Retrofit mRetrofit;
+    private RetrofitAPI mRetrofitAPI;
 
     private List<MainActivity.MusicDTO> music_list;
     private MediaPlayer mediaPlayer;
@@ -33,6 +45,7 @@ public class MusicDetailView extends AppCompatActivity implements View.OnClickLi
     private ContentResolver res;
     private ProgressUpdate progressUpdate;
     private int position;
+    private int prev_position;
     private boolean isShuffle = false;
     private boolean isSmile = false;
     private boolean isLike = true;
@@ -46,11 +59,13 @@ public class MusicDetailView extends AppCompatActivity implements View.OnClickLi
         setContentView(R.layout.music_detail_view);
         Intent intent = getIntent();
         mediaPlayer = new MediaPlayer();
+        setRetrofitInit();
         title = (TextView)findViewById(R.id.title);
         album = (ImageView)findViewById(R.id.album);
         seek_bar = (SeekBar)findViewById(R.id.seek_bar);
 
         position = intent.getIntExtra("position",0);
+        prev_position = -1;
         music_list = (List<MainActivity.MusicDTO>) intent.getSerializableExtra("playlist");
         res = getContentResolver();
 
@@ -96,18 +111,15 @@ public class MusicDetailView extends AppCompatActivity implements View.OnClickLi
             }
         });
 
-        mediaPlayer.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
-            @Override
-            public void onCompletion(MediaPlayer mp) {
-                //smile 이면 async 맞춰서 리퀘스트 기다리고 재생시키는 부분 만들어야함.
-                if(isSmile){
-                    play_smile_music();
-                }
-                else if(isShuffle){
-                    play_shuffle_music();
-                }else {
-                    play_next_music(1);
-                }
+        mediaPlayer.setOnCompletionListener(mp -> {
+            //smile 이면 async 맞춰서 리퀘스트 기다리고 재생시키는 부분 만들어야함.
+            if(isSmile){
+                play_smile_music();
+            }
+            else if(isShuffle){
+                play_shuffle_music();
+            }else {
+                play_next_music(1);
             }
         });
     }
@@ -118,12 +130,41 @@ public class MusicDetailView extends AppCompatActivity implements View.OnClickLi
     }
 
     private void play_smile_music(){
-        ////////////////////////좋아요, 싫어요 눌렀는지 확인하기////////////////////////////////////////////////////
-        ///////////////////////이 부분에서 다음 노래 리퀘스트 때리고 가져와서 다음 노래 틀어줌//////////////////////
-        position = new Random().nextInt(music_list.size());
-        //////////////////////////////////////////////////////position변경 바람/////////////////////////////////////
-        playMusic(music_list.get(position));
+        //isLike 1이면 좋아요 누르고 다음노래, 0이면 싫어요 누르고 다음노래
+        Call<ResponseBody> result = mRetrofitAPI.getnextmusic(
+                new nextmusicinfo(Integer.toString(prev_position),
+                        Integer.toString(position),
+                        Boolean.toString(isLike))
+        );
+        result.enqueue(mRetrofitCallback);
+
     }
+
+    private Callback<ResponseBody> mRetrofitCallback = new Callback<ResponseBody>() {
+        @Override
+        public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+            try {
+                String jsonString = response.body().string();
+                JSONObject jsonObject = new JSONObject(jsonString);
+                Log.i("result_info",jsonObject.toString());
+                Log.i("result_info",jsonObject.getString("body"));
+                prev_position = position;
+                position = Integer.parseInt(jsonObject.getString("body"));
+                Log.i("result_info",Integer.toString(position));
+                playMusic(music_list.get(position));
+            } catch (JSONException e) {
+                e.printStackTrace();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+
+        @Override
+        public void onFailure(Call<ResponseBody> call, Throwable t) {
+
+        }
+
+    };
 
 
 
@@ -181,6 +222,7 @@ public class MusicDetailView extends AppCompatActivity implements View.OnClickLi
                         like.setVisibility(View.GONE);
                         dislike.setVisibility(View.GONE);
                         isSmile = !isSmile;
+                        prev_position = -1;
                     }
                     shuffle.setColorFilter(Color.WHITE, PorterDuff.Mode.SRC_IN);
                 }
@@ -191,6 +233,7 @@ public class MusicDetailView extends AppCompatActivity implements View.OnClickLi
                     smile.setColorFilter(null);
                     like.setVisibility(View.GONE);
                     dislike.setVisibility(View.GONE);
+                    prev_position = -1;
                 } else {
                     if(isShuffle){
                         shuffle.setColorFilter(null);
@@ -278,5 +321,13 @@ public class MusicDetailView extends AppCompatActivity implements View.OnClickLi
             mediaPlayer.release();
             mediaPlayer = null;
         }
+    }
+
+    private void setRetrofitInit() {
+        mRetrofit = new Retrofit.Builder()
+                .baseUrl("http://192.249.19.252:2980")
+                .addConverterFactory(GsonConverterFactory.create())
+                .build();
+        mRetrofitAPI = mRetrofit.create(RetrofitAPI.class);
     }
 }
