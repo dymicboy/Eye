@@ -287,7 +287,7 @@ public class MusicDetailView extends AppCompatActivity implements View.OnClickLi
     private void playMusic(MainActivity.MusicDTO musicDTO) {
         try {
             seek_bar.setProgress(0);
-            if(musicDTO.getArtist().length() > 15)
+            if(musicDTO.getArtist().length() > 20)
                 title.setText(musicDTO.getTitle());
             else
                 title.setText(musicDTO.getArtist()+" - "+musicDTO.getTitle());
