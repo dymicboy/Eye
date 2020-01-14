@@ -196,7 +196,7 @@ public class MusicDetailView extends AppCompatActivity implements View.OnClickLi
                         shuffle.setColorFilter(null);
                         isShuffle = !isShuffle;
                     }
-                    smile.setColorFilter(Color.WHITE, PorterDuff.Mode.SRC_IN);
+                    smile.setColorFilter(Color.GRAY, PorterDuff.Mode.SRC_IN);
                     like.setVisibility(View.VISIBLE);
                     dislike.setVisibility(View.VISIBLE);
                     if(isLike){

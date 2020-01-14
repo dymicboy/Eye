@@ -16,9 +16,10 @@
         android:textSize="24dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.050000012" />
+        app:layout_constraintVertical_bias="0.114" />
 
     <LinearLayout
         android:id="@+id/linearLayout"
@@ -88,31 +89,17 @@
         app:layout_constraintVertical_bias="1.0">
 
         <LinearLayout
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal">
+            android:orientation="vertical">
 
             <SeekBar
                 android:id="@+id/seek_bar"
-                android:layout_width="0dp"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_weight="8"
-                android:progressDrawable="@drawable/progress"
                 android:thumb="@drawable/thumb" />
 
-            <ImageView
-                android:id="@+id/shuffle"
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_weight="2"
-                android:src="@drawable/shuffle" />
-
-            <ImageView
-                android:id="@+id/smile"
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_weight="2"
-                android:src="@drawable/smile" />
         </LinearLayout>
 
 
@@ -120,6 +107,21 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:orientation="horizontal">
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <ImageView
+                android:id="@+id/smile"
+                android:layout_width="30dp"
+                android:layout_height="match_parent"
+                android:layout_weight="2"
+                android:src="@drawable/smile"
+                android:layout_marginRight="30dp"/>
 
             <ImageView
                 android:id="@+id/pre"
@@ -148,7 +150,16 @@
                 android:id="@+id/next"
                 android:layout_width="50dp"
                 android:layout_height="wrap_content"
-                android:src="@drawable/next" />
+                android:src="@drawable/next"
+                android:layout_marginRight="30dp"
+                />
+
+            <ImageView
+                android:id="@+id/shuffle"
+                android:layout_width="30dp"
+                android:layout_height="match_parent"
+                android:layout_weight="2"
+                android:src="@drawable/shuffle" />
 
         </LinearLayout>
 

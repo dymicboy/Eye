@@ -18,7 +18,7 @@ public class intro extends AppIntro {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        addSlide(AppIntroFragment.newInstance("Jaudio","Jaudio를 사용하여 안정적인 틀을 마련했습니다.", R.drawable.jaudio, Color.parseColor("#8E0000")));
+        addSlide(AppIntroFragment.newInstance("Jaudio","Jaudio를 사용하여 안정적인 데이터를 마련했습니다.", R.drawable.jaudio, Color.parseColor("#8E0000")));
         addSlide(AppIntroFragment.newInstance("Python","Python을 이용해 Neural Network를 이용할 수 있는 환경을 구성했습니다.", R.drawable.python, Color.parseColor("#7B8259")));
         addSlide(AppIntroFragment.newInstance("Neural Network","Neural Network를 이용하여 사용자의 취향에 따라 노래를 평가할 때마다 학습합니다.", R.drawable.neural, Color.parseColor("#A5A5A5")));
         showStatusBar(false);
