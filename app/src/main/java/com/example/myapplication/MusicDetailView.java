@@ -74,7 +74,9 @@ public class MusicDetailView extends AppCompatActivity implements View.OnClickLi
         pause = (ImageView)findViewById(R.id.pause);
         next = (ImageView)findViewById(R.id.next);
         shuffle = findViewById(R.id.shuffle);
+        shuffle.setColorFilter(Color.GRAY);
         smile = findViewById(R.id.smile);
+        smile.setColorFilter(Color.GRAY);
         like = findViewById(R.id.like);
         dislike = findViewById(R.id.dislike);
 
@@ -215,10 +217,10 @@ public class MusicDetailView extends AppCompatActivity implements View.OnClickLi
                 break;
             case R.id.shuffle:
                 if (isShuffle) {
-                    shuffle.setColorFilter(null);
+                    shuffle.setColorFilter(Color.GRAY);
                 } else {
                     if(isSmile){
-                        smile.setColorFilter(null);
+                        smile.setColorFilter(Color.GRAY);
                         like.setVisibility(View.GONE);
                         dislike.setVisibility(View.GONE);
                         isSmile = !isSmile;
@@ -230,16 +232,16 @@ public class MusicDetailView extends AppCompatActivity implements View.OnClickLi
                 break;
             case R.id.smile:
                 if (isSmile) {
-                    smile.setColorFilter(null);
+                    smile.setColorFilter(Color.GRAY);
                     like.setVisibility(View.GONE);
                     dislike.setVisibility(View.GONE);
                     prev_position = -1;
                 } else {
                     if(isShuffle){
-                        shuffle.setColorFilter(null);
+                        shuffle.setColorFilter(Color.GRAY);
                         isShuffle = !isShuffle;
                     }
-                    smile.setColorFilter(Color.GRAY, PorterDuff.Mode.SRC_IN);
+                    smile.setColorFilter(Color.WHITE, PorterDuff.Mode.SRC_IN);
                     like.setVisibility(View.VISIBLE);
                     dislike.setVisibility(View.VISIBLE);
                     if(isLike){
